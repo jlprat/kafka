@@ -1930,7 +1930,7 @@ class ReplicaManager(val config: KafkaConfig,
   protected def createReplicaSelector(): Option[ReplicaSelector] = {
     config.replicaSelectorClassName.map { className =>
       val tmpReplicaSelector: ReplicaSelector = CoreUtils.createObject[ReplicaSelector](className)
-      tmpReplicaSelector.configure(config.originals())
+      tmpReplicaSelector.configure(config.originals)
       tmpReplicaSelector
     }
   }
