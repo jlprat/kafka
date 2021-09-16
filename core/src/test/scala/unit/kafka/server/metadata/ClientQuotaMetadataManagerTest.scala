@@ -234,16 +234,28 @@ class ClientQuotaMetadataManagerTest {
     val clientIdFilterComponent = ClientQuotaFilterComponent.ofEntityType(ClientQuotaEntity.CLIENT_ID)
     val expectedExceptionMessage = "Invalid entity filter component combination"
     assertThrows(classOf[InvalidRequestException],
-      () => cache.describeClientQuotas(Seq(ipFilterComponent, userFilterComponent), strict=false),
+      () => {
+        cache.describeClientQuotas(Seq(ipFilterComponent, userFilterComponent), strict=false)
+        ()
+      },
       () => expectedExceptionMessage)
     assertThrows(classOf[InvalidRequestException],
-      () => cache.describeClientQuotas(Seq(ipFilterComponent, clientIdFilterComponent), strict=false),
+      () => {
+        cache.describeClientQuotas(Seq(ipFilterComponent, clientIdFilterComponent), strict=false)
+        ()
+      },
       () => expectedExceptionMessage)
     assertThrows(classOf[InvalidRequestException],
-      () => cache.describeClientQuotas(Seq(ipFilterComponent, ipFilterComponent), strict = false),
+      () => {
+        cache.describeClientQuotas(Seq(ipFilterComponent, ipFilterComponent), strict = false)
+        ()
+      },
       () => expectedExceptionMessage)
     assertThrows(classOf[InvalidRequestException],
-      () => cache.describeClientQuotas(Seq(userFilterComponent, userFilterComponent), strict=false),
+      () => {
+        cache.describeClientQuotas(Seq(userFilterComponent, userFilterComponent), strict = false)
+        ()
+      },
       () => expectedExceptionMessage)
   }
 

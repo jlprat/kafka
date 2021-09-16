@@ -1348,7 +1348,10 @@ class LogTest {
         new SimpleRecord(mockTime.milliseconds, s"key-$seq".getBytes, s"value-$seq".getBytes),
         new SimpleRecord(mockTime.milliseconds, s"key-$seq".getBytes, s"value-$seq".getBytes)),
       producerId = pid, producerEpoch = epoch, sequence = seq - 2)
-    assertThrows(classOf[OutOfOrderSequenceException], () => log.appendAsLeader(records, leaderEpoch = 0),
+    assertThrows(classOf[OutOfOrderSequenceException], () => {
+      log.appendAsLeader(records, leaderEpoch = 0)
+      ()
+    },
       () => "Should have received an OutOfOrderSequenceException since we attempted to append a duplicate of a records in the middle of the log.")
 
     // Append a duplicate of the batch which is 4th from the tail. This should succeed without error since we
@@ -1361,7 +1364,10 @@ class LogTest {
     records = TestUtils.records(
       List(new SimpleRecord(mockTime.milliseconds, s"key-1".getBytes, s"value-1".getBytes)),
       producerId = pid, producerEpoch = epoch, sequence = 1)
-    assertThrows(classOf[OutOfOrderSequenceException], () => log.appendAsLeader(records, leaderEpoch = 0),
+    assertThrows(classOf[OutOfOrderSequenceException], () => {
+      log.appendAsLeader(records, leaderEpoch = 0)
+      ()
+    },
       () => "Should have received an OutOfOrderSequenceException since we attempted to append a duplicate of a batch which is older than the last 5 appended batches.")
 
     // Append a duplicate entry with a single records at the tail of the log. This should return the appendInfo of the original entry.
@@ -1928,7 +1934,10 @@ class LogTest {
     // should be able to append the small message
     log.appendAsLeader(first, leaderEpoch = 0)
 
-    assertThrows(classOf[RecordTooLargeException], () => log.appendAsLeader(second, leaderEpoch = 0),
+    assertThrows(classOf[RecordTooLargeException], () => {
+      log.appendAsLeader(second, leaderEpoch = 0)
+      ()
+    },
       () => "Second message set should throw MessageSizeTooLargeException.")
   }
 
@@ -2261,7 +2270,10 @@ class LogTest {
     for (magic <- magicVals; compression <- compressionTypes) {
       val invalidRecord = MemoryRecords.withRecords(magic, compression, new SimpleRecord(1.toString.getBytes))
       assertThrows(classOf[UnexpectedAppendOffsetException],
-        () => log.appendAsFollower(invalidRecord),
+        () => {
+          log.appendAsFollower(invalidRecord)
+          ()
+        },
         () => s"Magic=$magic, compressionType=$compression")
     }
   }
@@ -2505,14 +2517,20 @@ class LogTest {
   @Test
   def testParseTopicPartitionNameForEmptyName(): Unit = {
     val dir = new File("")
-    assertThrows(classOf[KafkaException], () => Log.parseTopicPartitionName(dir),
+    assertThrows(classOf[KafkaException], () => {
+      Log.parseTopicPartitionName(dir)
+      ()
+    },
       () => "KafkaException should have been thrown for dir: " + dir.getCanonicalPath)
   }
 
   @Test
   def testParseTopicPartitionNameForNull(): Unit = {
     val dir: File = null
-    assertThrows(classOf[KafkaException], () => Log.parseTopicPartitionName(dir),
+    assertThrows(classOf[KafkaException], () => {
+      Log.parseTopicPartitionName(dir)
+      ()
+    },
       () => "KafkaException should have been thrown for dir: " + dir)
   }
 
@@ -2521,11 +2539,17 @@ class LogTest {
     val topic = "test_topic"
     val partition = "1999"
     val dir = new File(logDir, topic + partition)
-    assertThrows(classOf[KafkaException], () => Log.parseTopicPartitionName(dir),
+    assertThrows(classOf[KafkaException], () => {
+      Log.parseTopicPartitionName(dir)
+      ()
+    },
       () => "KafkaException should have been thrown for dir: " + dir.getCanonicalPath)
     // also test the "-delete" marker case
     val deleteMarkerDir = new File(logDir, topic + partition + "." + DeleteDirSuffix)
-    assertThrows(classOf[KafkaException], () => Log.parseTopicPartitionName(deleteMarkerDir),
+    assertThrows(classOf[KafkaException], () => {
+      Log.parseTopicPartitionName(deleteMarkerDir)
+      ()
+    },
       () => "KafkaException should have been thrown for dir: " + deleteMarkerDir.getCanonicalPath)
   }
 
@@ -2534,13 +2558,19 @@ class LogTest {
     val topic = ""
     val partition = "1999"
     val dir = new File(logDir, topicPartitionName(topic, partition))
-    assertThrows(classOf[KafkaException], () => Log.parseTopicPartitionName(dir),
+    assertThrows(classOf[KafkaException], () => {
+      Log.parseTopicPartitionName(dir)
+      ()
+    },
       () => "KafkaException should have been thrown for dir: " + dir.getCanonicalPath)
 
     // also test the "-delete" marker case
     val deleteMarkerDir = new File(logDir, Log.logDeleteDirName(new TopicPartition(topic, partition.toInt)))
 
-    assertThrows(classOf[KafkaException], () => Log.parseTopicPartitionName(deleteMarkerDir),
+    assertThrows(classOf[KafkaException], () => {
+      Log.parseTopicPartitionName(deleteMarkerDir)
+      ()
+    },
       () => "KafkaException should have been thrown for dir: " + deleteMarkerDir.getCanonicalPath)
   }
 
@@ -2549,12 +2579,18 @@ class LogTest {
     val topic = "test_topic"
     val partition = ""
     val dir = new File(logDir.getPath + topicPartitionName(topic, partition))
-    assertThrows(classOf[KafkaException], () => Log.parseTopicPartitionName(dir),
+    assertThrows(classOf[KafkaException], () => {
+      Log.parseTopicPartitionName(dir)
+      ()
+    },
       () => "KafkaException should have been thrown for dir: " + dir.getCanonicalPath)
 
     // also test the "-delete" marker case
     val deleteMarkerDir = new File(logDir, topicPartitionName(topic, partition) + "." + DeleteDirSuffix)
-    assertThrows(classOf[KafkaException], () => Log.parseTopicPartitionName(deleteMarkerDir),
+    assertThrows(classOf[KafkaException], () => {
+      Log.parseTopicPartitionName(deleteMarkerDir)
+      ()
+    },
       () => "KafkaException should have been thrown for dir: " + deleteMarkerDir.getCanonicalPath)
   }
 
@@ -2563,22 +2599,34 @@ class LogTest {
     val topic = "test_topic"
     val partition = "1999a"
     val dir = new File(logDir, topicPartitionName(topic, partition))
-    assertThrows(classOf[KafkaException], () => Log.parseTopicPartitionName(dir),
+    assertThrows(classOf[KafkaException], () => {
+      Log.parseTopicPartitionName(dir)
+      ()
+    },
       () => "KafkaException should have been thrown for dir: " + dir.getCanonicalPath)
 
     // also test the "-delete" marker case
     val deleteMarkerDir = new File(logDir, topic + partition + "." + DeleteDirSuffix)
-    assertThrows(classOf[KafkaException], () => Log.parseTopicPartitionName(deleteMarkerDir),
+    assertThrows(classOf[KafkaException], () => {
+      Log.parseTopicPartitionName(deleteMarkerDir)
+      ()
+    },
       () => "KafkaException should have been thrown for dir: " + deleteMarkerDir.getCanonicalPath)
   }
 
   @Test
   def testParseTopicPartitionNameForExistingInvalidDir(): Unit = {
     val dir1 = new File(logDir.getPath + "/non_kafka_dir")
-    assertThrows(classOf[KafkaException], () => Log.parseTopicPartitionName(dir1),
+    assertThrows(classOf[KafkaException], () => {
+      Log.parseTopicPartitionName(dir1)
+      ()
+    },
       () => "KafkaException should have been thrown for dir: " + dir1.getCanonicalPath)
     val dir2 = new File(logDir.getPath + "/non_kafka_dir-delete")
-    assertThrows(classOf[KafkaException], () => Log.parseTopicPartitionName(dir2),
+    assertThrows(classOf[KafkaException], () => {
+      Log.parseTopicPartitionName(dir2)
+      ()
+    },
       () => "KafkaException should have been thrown for dir: " + dir2.getCanonicalPath)
   }
 
